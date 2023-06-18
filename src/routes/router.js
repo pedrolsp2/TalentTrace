@@ -16,6 +16,10 @@ import InfoUser from '../pages/NewAccount/Info'
 import NewAccount from "../pages/NewAccount";
 import UserProfile from '../pages/Components/UserProfile'
 import SucessPost from "../pages/NewPost/SucessPost";
+import Settings from "../pages/Components/Settings";
+import EditSkills from "../pages/Components/Settings/EditSkills";
+import EditPassword from "../pages/Components/Settings/EditPassword";
+import EditCover from "../pages/Components/Settings/EditCover";
 import { SelectPhoto } from "../pages/NewPost/SelectPhoto";
 
 const Stack = createNativeStackNavigator();
@@ -118,6 +122,58 @@ export default function Routes() {
           headerLeft: () => (
             <HeaderBackButton
               onPress={() => navigation.navigate('TabRouter', { screen: 'ForYou' })}
+              tintColor="#1c3f7c"
+            />
+          ),
+        })}
+      />
+      <Stack.Screen
+        name="Settings"
+        component={Settings}
+        options={() => ({
+          title: "Configurações",
+          headerLeft: () => (
+            <HeaderBackButton
+              onPress={() => navigation.navigate('TabRouter', { screen: 'Index' })}
+              tintColor="#1c3f7c"
+            />
+          ),
+        })}
+      />
+      <Stack.Screen
+        name="EditPassword"
+        component={EditPassword}
+        options={() => ({
+          title: "Editar Senha",
+          headerLeft: () => (
+            <HeaderBackButton
+              onPress={() => navigation.navigate('Routes', { screen: 'Settings' })}
+              tintColor="#1c3f7c"
+            />
+          ),
+        })}
+      />
+      <Stack.Screen
+        name="EditSkills"
+        component={EditSkills}
+        options={() => ({
+          title: "Editar Skills",
+          headerLeft: () => (
+            <HeaderBackButton
+              onPress={() => navigation.navigate('Routes', { screen: 'Settings' })}
+              tintColor="#1c3f7c"
+            />
+          ),
+        })}
+      />
+      <Stack.Screen
+        name="EditCover"
+        component={EditCover}
+        options={() => ({
+          title: "Editar Perfil",
+          headerLeft: () => (
+            <HeaderBackButton
+              onPress={() => navigation.navigate('Routes', { screen: 'Settings' })}
               tintColor="#1c3f7c"
             />
           ),

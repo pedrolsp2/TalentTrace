@@ -89,8 +89,7 @@ export default function Index() {
     }  
 
     function reload(){
-      AsyncStorage.removeItem('@talenttrace:idUser');
-      navigation.navigate("Login")
+      navigation.navigate("Settings", { data: {...userData,urlFoto:photoProfile,urlCover:photoCover} })
     }
 
     return (

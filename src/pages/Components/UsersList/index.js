@@ -7,6 +7,7 @@ import { firebase as fb } from '../../../Configs/firebasestorageconfig.js';
 
 const UsersList = ({ data }) => {
   const [photoProfile, setPhotoProfile] = useState(null);
+  const [cell, setCell] = useState(data?.contato);
   const storage = fb.storage();
   const navigation = useNavigation();
 
@@ -44,13 +45,14 @@ const UsersList = ({ data }) => {
   };
 
   const onShareWP = async () => {
-    const phoneNumber = '5534996547587';
+    const phoneNumber = cell.replace(/[()\s-]/g, '');
+    const formattedPhoneNumber = phoneNumber ? `55${phoneNumber}` : '';
     const message = encodeURIComponent('Olá! Vim pelo TalentTrace! Vamos jogar?!');
-    const url = `https://api.whatsapp.com/send/?phone=${phoneNumber}&text=${message}&type=phone_number&app_absent=0`;
-
+    const url = `https://api.whatsapp.com/send/?phone=${formattedPhoneNumber}&text=${message}&type=phone_number&app_absent=0`;
     Linking.openURL(url)
       .catch(error => console.log(error));
   };
+  
 
   return (
     <SafeAreaView style={styles.container}>
@@ -74,7 +76,7 @@ const UsersList = ({ data }) => {
           </View>
         </View>
         <View style={styles.shareUser}>
-          <TouchableOpacity onPress={onShare}>
+          <TouchableOpacity onPress={onShareWP}>
             <Ionicons
               name="logo-whatsapp"
               size={24}
@@ -82,7 +84,7 @@ const UsersList = ({ data }) => {
               style={styles.iconSkills}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={onShareWP}>
+          <TouchableOpacity onPress={onShare}>
             <Ionicons
               name="share-social-outline"
               size={24}
