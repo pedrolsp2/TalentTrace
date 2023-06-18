@@ -128,4 +128,8 @@ export const styles = StyleSheet.create({
     height: '100%',
     resizeMode: 'contain',
   },
+  labelPubli:{
+    fontSize: 16,
+    fontFamily: 'Poppins_700Bold',
+  }
 });

@@ -1,7 +1,7 @@
 import React,{useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import firebase from "../Configs/firebaseconfig"
-import { Alert } from 'react-native'
+import Toast from 'react-native-toast-message';
 
 export async function handleNewId(id) {
     try {    
@@ -35,7 +35,11 @@ export async function handleNewId(id) {
         idUser: idMyUser,
         idUserFavorite: idUserFavorite
       });
-      Alert.alert("Sucesso!","Adicionado com sucesso")
+      Toast.show({
+        type: "success",
+        text1: "Sucesso!",
+        text2: "Atleta favoritado com sucesso!"
+      })
       return userNew;
     } catch (error) {
       console.log(error);
@@ -72,7 +76,11 @@ export async function handleNewId(id) {
       querySnapshot.forEach((doc) => {
         favoritesRef.doc(doc.id).delete();
       });
-        Alert.alert("Sucesso!","Exluido com sucesso")
+      Toast.show({
+        type: "success",
+        text1: "Sucesso!",
+        text2: "Atleta excluido com sucesso!"
+      })
     } catch (error) {
       console.error('Erro ao excluir o documento:', error);
     }

@@ -6,6 +6,7 @@ import firebase from "../../../Configs/firebaseconfig.js"
 import { styles } from './styles.js';
 import { firebase as fb } from '../../../Configs/firebasestorageconfig.js';
 import { querryId, saveFavorites, isFavorites, removeFavorites } from '../../../utils/storage';
+import { Publications } from '../Publications/index.js';
 
 export default function UserProfile() {
   const route = useRoute();
@@ -204,6 +205,10 @@ export default function UserProfile() {
             <Text style={styles.textP}>{userData && userData.passou}</Text>
             <Text style={styles.label}>Sobre mim</Text>
             <Text style={styles.textP}>{userData && userData.sobre}</Text>
+              <Text style={styles.labelPubli}>
+                Publicações
+              </Text>
+                <Publications data={userData && userData.idUser}/>
           </View>
         </View>
       </ScrollView>

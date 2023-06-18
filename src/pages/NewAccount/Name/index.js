@@ -11,6 +11,7 @@ export default function Name() {
   const navigation = useNavigation();
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
+  const [emailStatus, setEmailStatus] = useState(true)
 
   const isEmailValid = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;      
@@ -35,27 +36,27 @@ export default function Name() {
       })
     }
     else{
-      try{
-        const id = uuid.v4();
-        const newData = {
-          id,
-          nome,
-          email,
-        }
+        try{
+          const id = uuid.v4();
+          const newData = {
+            id,
+            nome,
+            email,
+          }
 
-      await AsyncStorage.setItem("@talenttrace:dataUsers",JSON.stringify(newData));
-      }catch(error){
-        console.log(error)
-        
-        Toast.show({
-          type: "error",
-          text1: "Erro ao cadastar",
-          text2: "Parece que encontramos um erro ao cadastrar, tente novamente depois."
-        })
+        await AsyncStorage.setItem("@talenttrace:dataUsers",JSON.stringify(newData));
+        }catch(error){
+          console.log(error)
+          
+          Toast.show({
+            type: "error",
+            text1: "Erro ao cadastar",
+            text2: "Parece que encontramos um erro ao cadastrar, tente novamente depois."
+          })
+        }
+        navigation.navigate("PasswordUser")
       }
-      navigation.navigate("PasswordUser")
     }
-  }
 
   return (
     <SafeAreaView style={styles.container}>

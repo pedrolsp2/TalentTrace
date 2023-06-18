@@ -18,7 +18,6 @@ export default function Index() {
   const [dataUser, setDataUser] = useState({})
   const [documents, setDocuments] = useState([]);
 
-
   const statusUser = () => {
     return !!dataUser;
   };
@@ -61,18 +60,6 @@ export default function Index() {
           getImageUrl(data[0]);
         }
       });
-
-        db.collection('post')
-        .where('idUser', '==', idUs)
-        .get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            console.log(doc.data()); 
-          });
-        })
-        .catch((error) => {
-          console.log('Erro ao obter os documentos:', error);
-        });
 
       setIdUs(dataUser)
 
@@ -218,10 +205,10 @@ export default function Index() {
               <Text style={styles.textP}>
                 {userData.sobre}
               </Text>
-              <Text style={styles.label}>
+              <Text style={styles.labelPubli}>
                 Publicações
               </Text>
-                <Publications/>
+                <Publications data={userData.idUser}/>
             </View>
           </View>
         </ScrollView>

@@ -5,7 +5,7 @@ import {styles} from './styles';
 import Vector1 from '../../../assets/Vector-Soccer.png'; 
 
 export default function LetsGo() { 
-    const navigation = useNavigation();     
+    const navigation = useNavigation();   
 
     return(
         <SafeAreaView style={styles.container}>

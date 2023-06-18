@@ -35,6 +35,29 @@ export default function Info() {
       console.log(error);
     }
   };
+  const formatPhoneNumber = (input) => {
+    let formattedNumber = input.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
+
+    if (formattedNumber.length > 0) {
+      formattedNumber = '(' + formattedNumber;
+    }
+    if (formattedNumber.length > 3) {
+      formattedNumber = formattedNumber.replace(/(\d{2})(\d)/, '$1) $2');
+    }
+    if (formattedNumber.length > 10) {
+      formattedNumber = formattedNumber.replace(/(\d{5})(\d)/, '$1-$2');
+    }
+    if (formattedNumber.length > 15) {
+      formattedNumber = formattedNumber.substr(0, 15);
+    }
+
+    return formattedNumber;
+  };
+
+  const handleNumberChange = (input) => {
+    const formattedNumber = formatPhoneNumber(input);
+    setNumber(formattedNumber);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -58,7 +81,7 @@ export default function Info() {
                   style={styles.textInput}
                   placeholder='Ex: (34) 9 9632-5874'
                   value={number}
-                  onChangeText={setNumber}
+                  onChangeText={handleNumberChange}
                 />
               </View>
             </View>

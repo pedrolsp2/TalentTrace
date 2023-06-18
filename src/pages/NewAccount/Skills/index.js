@@ -105,6 +105,8 @@ export default function Skills() {
                   placeholder='Sua idade'
                   value={age}
                   onChangeText={setAge}
+                  maxLength={3}
+                  keyboardType='numeric'
                 />
               </View>
             </View>
@@ -129,6 +131,7 @@ export default function Skills() {
                   placeholder='Seu peso'
                   value={weight}
                   onChangeText={setWeight}
+                  keyboardType='numeric'
                 />
               </View>
             </View>

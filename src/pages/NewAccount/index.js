@@ -54,6 +54,7 @@ export default function NewAccount() {
     const userNew = await firebase.firestore().collection("users").add({
       idUser: id,
       altura: users.altura,
+      idade: users.idade,
       cidade: users.cidade,
       email: users.email,
       nome: users.nome,

@@ -75,7 +75,6 @@ export default function NewPost() {
         <View style={styles.containerPicture}>
           {image && <Image source={{ uri: image.uri }} style={styles.ImageP}></Image>}
         </View>
-        <TouchableOpacity onPress={()=>navigation.navigate('SelectPhoto')}><Text>as</Text></TouchableOpacity>
         <TouchableOpacity style={[styles.Button,{marginBottom: 4, backgroundColor: secundaryColor}]} onPress={pickImage}>
           <Text style={styles.TextButton}>Selecionar</Text>
         </TouchableOpacity>
