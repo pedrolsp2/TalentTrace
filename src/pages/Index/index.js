@@ -88,8 +88,13 @@ export default function Index() {
       return null;
     }  
 
-    function reload(){
+    function setting(){
       navigation.navigate("Settings", { data: {...userData,urlFoto:photoProfile,urlCover:photoCover} })
+    }
+
+    function exit(){
+      AsyncStorage.removeItem('@talenttrace:idUser');
+      navigation.navigate("Welcome")
     }
 
     return (
@@ -106,7 +111,7 @@ export default function Index() {
             ) : 
             <View style={styles.skeletonImage}></View>
           }
-            <TouchableOpacity style={styles.edit} onPress={reload} ><Ionicons name='create-outline' size={24} color="#1c3f7c"/></TouchableOpacity>
+            <TouchableOpacity style={styles.edit} onPress={setting} ><Ionicons name='create-outline' size={24} color="#1c3f7c"/></TouchableOpacity>
           </View>
           <View style={styles.containerContnet}>
             <Text style={styles.Nome}>
@@ -210,6 +215,9 @@ export default function Index() {
                 <Publications data={userData.idUser}/>
             </View>
           </View>
+          <TouchableOpacity onPress={exit} style={styles.exit}>
+            <Text style={styles.exitText}>Desconectar</Text>
+          </TouchableOpacity>
         </ScrollView>
       </SafeAreaView>
     )

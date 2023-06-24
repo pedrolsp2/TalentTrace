@@ -151,12 +151,6 @@ export default function Routes() {
         component={EditSkills}
         options={() => ({
           title: "Editar Skills",
-          headerLeft: () => (
-            <HeaderBackButton
-              onPress={() => navigation.navigate('Routes', { screen: 'Settings' })}
-              tintColor="#1c3f7c"
-            />
-          ),
         })}
       />
     </Stack.Navigator>

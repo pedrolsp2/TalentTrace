@@ -1,12 +1,11 @@
 import React, {useState} from 'react';
-import { View, Image, Text, PixelRatio, SafeAreaView, TouchableOpacity, TextInput, Alert } from 'react-native';
+import { View, Image, Text, PixelRatio, SafeAreaView, TouchableOpacity, TextInput } from 'react-native';
 import { useNavigation } from "@react-navigation/native"; 
-import { AntDesign, Ionicons } from '@expo/vector-icons';
-import {primaryColor, styles} from './styles';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { initializeApp } from 'firebase/app';
-import { firebaseConfig } from '../../Configs/firebase-config';
+import { Ionicons } from '@expo/vector-icons';
+import { styles} from './styles';
 import {handleNewId} from '../../utils/storage'
+import {firebase} from '../../Configs/firebasestorageconfig'
+import Toast from 'react-native-toast-message';
 
 export default function Login() { 
     
@@ -15,25 +14,43 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const [user, setUser] = useState('');
     const [error, setError] = useState('');
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
 
-    const handleSingIn = () =>{
-        signInWithEmailAndPassword(auth,user, password)
-        .then((userCredential) => {
-            const userOn = userCredential.user;
-            handleNewId(userOn.uid)
-            navigation.navigate('TabRouter', { screen: 'Index'});
-          })
-          .catch(error => {
-            if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-email') {
-                setError('Usuário ou senha incorretos.');
-                setPassword('');
-                setUser('');
-            }
+    const handleSingIn = async () => {
+        try {
+          const snapshot = await firebase
+            .firestore()
+            .collection("users")
+            .where("email", "==", user)
+            .where("senha", "==", password)
+            .get();
+      
+          const usuarios = [];
+      
+          snapshot.forEach((doc) => {
+            usuarios.push(doc.data());
+            handleNewId(doc.data().idUser);
+            navigation.navigate('TabRouter', { screen: 'Index' });
           });
-    }
-
+      
+          if (usuarios.length === 0) {
+            Toast.show({
+              type: "error",
+              text1: "Erro ao fazer login",
+              text2: "Seu e-mail ou senha não esta invalido."
+            })
+            setPassword('');
+            setUser('');
+          }
+      
+          return usuarios;
+        } catch (error) {
+          setError('Ocorreu um erro ao buscar usuários.');
+          setPassword('');
+          setUser('');
+          console.log("Erro ao buscar usuários:", error);
+          return [];
+        }
+      };   
 
     return(
         <SafeAreaView style={styles.container}>

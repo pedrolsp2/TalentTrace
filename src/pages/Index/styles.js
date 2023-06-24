@@ -131,5 +131,27 @@ export const styles = StyleSheet.create({
   labelPubli:{
     fontSize: 16,
     fontFamily: 'Poppins_700Bold',
+  },
+  exit: {
+    marginBottom: '3%',
+    marginStart: '3%',
+    marginEnd: '3%',
+    width: '90%',
+    height: 42,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 12,
+    backgroundColor: '#971D1D',
+    alignSelf: 'center', // Centraliza horizontalmente
+    marginTop: 'auto', // Centraliza verticalmente
+    marginBottom: 'auto', // Centraliza verticalmente
+  },
+  exitText: {
+    color: '#fafafa',
+    textAlign: 'center',
+    fontSize: 16,
+    fontFamily: 'Poppins_700Bold',
   }
+  
 });

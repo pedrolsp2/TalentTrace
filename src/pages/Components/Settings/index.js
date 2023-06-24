@@ -117,7 +117,7 @@ export default function Settings() {
           <TouchableOpacity
             style={styles.smallButton}
             onPress={() => {
-
+              navigation.navigate('Routes', { screen: 'EditSkills', params: { data: data } });
             }}
           >
             <Text style={styles.smallButtonText}>Editar Skills</Text>
