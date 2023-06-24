@@ -3,9 +3,11 @@ import { Text, View, SafeAreaView, Image, StyleSheet, TouchableOpacity, ScrollVi
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { firebase } from '../../../Configs/firebasestorageconfig.js'
+import Toast from 'react-native-toast-message';
 
 export default function Settings() {
   const route = useRoute();
+  const navigation = useNavigation();
   const [newPicture, setNewPicture] = useState(false);
   const [image, setImage] = useState(null);
   const [newCover, setNewCover] = useState(false);
@@ -43,8 +45,11 @@ export default function Settings() {
   
         // Faz o upload do novo blob para substituir o arquivo existente
         await storageRef.put(blob);
-  
-        console.log('Imagem de perfil atualizada com sucesso no armazenamento!');
+        Toast.show({
+          type: "success",
+          text1: "Sucesso",
+          text2: "Imagem de perfil atualizada com sucesso!"
+        })
       } catch (error) {
         console.log('Erro ao atualizar imagem de perfil no armazenamento:', error);
       }
@@ -61,8 +66,11 @@ export default function Settings() {
   
         // Faz o upload do novo blob para substituir o arquivo existente
         await storageRef.put(blob);
-  
-        console.log('Imagem de capa atualizada com sucesso no armazenamento!');
+        Toast.show({
+          type: "success",
+          text1: "Sucesso",
+          text2: "Imagem de capa atualizada com sucesso!"
+        })
       } catch (error) {
         console.log('Erro ao atualizar imagem de capa no armazenamento:', error);
       }
@@ -93,9 +101,29 @@ export default function Settings() {
             </TouchableOpacity>
           </View>
         </View>
-        <TouchableOpacity style={styles.Button} onPress={handleConfirmChanges}>
-          <Text style={styles.TextButton}>Confirmar Alterações</Text>
-        </TouchableOpacity>
+        <View>
+          <TouchableOpacity style={styles.Button} onPress={handleConfirmChanges}>
+            <Text style={styles.TextButton}>Confirmar Alterações</Text>
+          </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.smallButton}
+            onPress={() => {
+              navigation.navigate('Routes', { screen: 'EditPassword', params: { data: data } });
+            }}
+          >
+            <Text style={styles.smallButtonText}>Editar Login</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.smallButton}
+            onPress={() => {
+
+            }}
+          >
+            <Text style={styles.smallButtonText}>Editar Skills</Text>
+          </TouchableOpacity>
+        </View>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -109,6 +137,7 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     justifyContent: 'space-between',
+    padding: 12,
   },
   Title: {
     fontFamily: 'Poppins_700Bold',
@@ -119,6 +148,8 @@ const styles = StyleSheet.create({
     color: '#1A0751',
     textAlign: 'center',
     fontSize: 18,
+    marginTop: 16,
+    marginBottom: 12
   },
   containerImages: {
     width: '100%',
@@ -155,6 +186,25 @@ const styles = StyleSheet.create({
     borderRadius: 32,
     backgroundColor: '#14AF6C',
     marginBottom: 16,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  smallButton: {
+    width: '48%',
+    height: 52,
+    borderWidth: 1,
+    borderColor: '#fafafa',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 32,
+    backgroundColor: '#1A0751',
+  },
+  smallButtonText: {
+    fontFamily: 'Poppins_700Bold',
+    color: '#fafafa',
   },
   TextButton: {
     fontFamily: 'Poppins_700Bold',

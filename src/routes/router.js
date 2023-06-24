@@ -19,7 +19,6 @@ import SucessPost from "../pages/NewPost/SucessPost";
 import Settings from "../pages/Components/Settings";
 import EditSkills from "../pages/Components/Settings/EditSkills";
 import EditPassword from "../pages/Components/Settings/EditPassword";
-import EditCover from "../pages/Components/Settings/EditCover";
 import { SelectPhoto } from "../pages/NewPost/SelectPhoto";
 
 const Stack = createNativeStackNavigator();
@@ -144,13 +143,7 @@ export default function Routes() {
         name="EditPassword"
         component={EditPassword}
         options={() => ({
-          title: "Editar Senha",
-          headerLeft: () => (
-            <HeaderBackButton
-              onPress={() => navigation.navigate('Routes', { screen: 'Settings' })}
-              tintColor="#1c3f7c"
-            />
-          ),
+          title: "Editar Acesso",
         })}
       />
       <Stack.Screen
@@ -158,19 +151,6 @@ export default function Routes() {
         component={EditSkills}
         options={() => ({
           title: "Editar Skills",
-          headerLeft: () => (
-            <HeaderBackButton
-              onPress={() => navigation.navigate('Routes', { screen: 'Settings' })}
-              tintColor="#1c3f7c"
-            />
-          ),
-        })}
-      />
-      <Stack.Screen
-        name="EditCover"
-        component={EditCover}
-        options={() => ({
-          title: "Editar Perfil",
           headerLeft: () => (
             <HeaderBackButton
               onPress={() => navigation.navigate('Routes', { screen: 'Settings' })}
