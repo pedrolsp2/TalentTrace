@@ -4,16 +4,29 @@ import { styles } from './styles';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons, AntDesign } from '@expo/vector-icons';
 import { firebase as fb } from '../../../Configs/firebasestorageconfig.js';
+import { format, parse } from 'date-fns';
 
 const UsersList = ({ data }) => {
   const [photoProfile, setPhotoProfile] = useState(null);
   const [cell, setCell] = useState(data?.contato);
+  const [age, setAge] = useState('')
   const storage = fb.storage();
   const navigation = useNavigation();
 
   useEffect(() => {
+    if (data && data.idade) {
+      const age = calculateAge(data.idade);
+      setAge(age);
+    }
     getImageUrl(data);
-  }, []);
+  }, [data]);
+
+  function calculateAge(dateString) {
+    const currentDate = new Date();
+    const providedDate = parse(dateString, 'dd/MM/yyyy', new Date());
+    const diffInYears = Math.floor((currentDate - providedDate) / (365.25 * 24 * 60 * 60 * 1000));
+    return diffInYears;
+  }
 
   const getImageUrl = async (userData) => {
     try {
@@ -72,7 +85,7 @@ const UsersList = ({ data }) => {
           </TouchableOpacity>
           <View>
             <Text style={styles.NameUser}>{data.nome}</Text>
-            <Text style={styles.CityUser}>{data.idade} anos de {data.cidade}</Text>
+            <Text style={styles.CityUser}>{age} anos de {data.cidade}</Text>
           </View>
         </View>
         <View style={styles.shareUser}>
@@ -135,7 +148,7 @@ const UsersList = ({ data }) => {
               color="#1C3F7C"
               style={styles.iconSkills}
             />
-            <Text style={styles.textIcon}> {data.idade} anos</Text>
+            <Text style={styles.textIcon}> {age} anos</Text>
           </Text>
 
           <Text style={styles.icon}>

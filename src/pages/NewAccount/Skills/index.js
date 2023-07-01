@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, Text, Button, SafeAreaView, TouchableOpacity, TextInput, RadioButton  } from 'react-native';
+import { View, ScrollView, Text, Platform, SafeAreaView, TouchableOpacity, TextInput, Pressable  } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { primaryColor, secundaryColor, TerColor, styles } from '../styles.js';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function Skills() {
   const [city, setCity] = useState('');
@@ -12,6 +13,8 @@ export default function Skills() {
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
   const [position, setPostion] = useState('');
+  const [date, setDate] = useState(new Date());
+  const [showPicker, setShowPicker] = useState(false);
   const [leg, setLeg] = useState('');
   const [newData, setNewData] = useState(null);
   const navigation = useNavigation();
@@ -49,8 +52,8 @@ export default function Skills() {
     if(!city || !age || !height || !weight || !position || !leg){
       Toast.show({
         type: "error",
-        text1: "Erro ao cadastar",
-        text2: "Preenche todos os campos."
+        text1: "Erro ao cadastrar",
+        text2: "Preencha todos os campos."
       })
     }
     else{
@@ -71,12 +74,45 @@ export default function Skills() {
       navigation.navigate("DescritionUser")
     }
   };
+
+  const toggleDatepicker = () => {
+    setShowPicker(!showPicker);
+  };
+
+  const onChange = ({ type }, selectedDate) => {
+    if (type === 'set') {
+      const currentDate = selectedDate;
+      setDate(currentDate);
   
+      if (Platform.OS === 'android') {
+        toggleDatepicker();
+        setAge(formatDate(currentDate));
+      }
+    } else {
+      toggleDatepicker();
+    }
+  };
+  
+  const formatDate = (date) => {
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+  
+    const formattedDay = day < 10 ? `0${day}` : `${day}`;
+    const formattedMonth = month < 10 ? `0${month}` : `${month}`;
+  
+    return `${formattedDay}/${formattedMonth}/${year}`;
+  };
+
+  const iosDate = () => {
+    toggleDatepicker();
+  };
+
   return (
     <SafeAreaView style={styles.container}> 
       <ScrollView style={styles.containerItems}>
         <View style={styles.info}>
-          <TouchableOpacity onPress={()=>navigation.navigate('PasswordUser')}> 
+          <TouchableOpacity onPress={() => navigation.navigate('PasswordUser')}> 
             <Ionicons
               name='chevron-back-outline'
               size={52}
@@ -94,19 +130,6 @@ export default function Skills() {
                   placeholder='Sua cidade'
                   value={city}
                   onChangeText={setCity}
-                />
-              </View>
-            </View>
-            <View style={styles.input}>
-              <View style={styles.placeholder}>
-                <Ionicons name='person-outline' size={32} color="#1C3F7C" style={styles.icon} />
-                <TextInput
-                  style={styles.textInput}
-                  placeholder='Sua idade'
-                  value={age}
-                  onChangeText={setAge}
-                  maxLength={3}
-                  keyboardType='numeric'
                 />
               </View>
             </View>
@@ -156,6 +179,50 @@ export default function Skills() {
                   onChangeText={setLeg}
                 />
               </View>
+
+              <View style={styles.input}>
+              <AntDesign name='calendar' size={32} color="#1C3F7C" style={styles.icon} />
+              {showPicker && (
+                <DateTimePicker
+                  mode='date'
+                  display='spinner'
+                  value={date}
+                  onChange={onChange}
+                  style={styles.datePicker}
+                />
+              )}
+
+              {showPicker && Platform.OS === 'ios' && (
+                <View style={styles.pickerButtonsContainer}>
+                  <TouchableOpacity
+                    style={[styles.pickerButton, { backgroundColor: '#11182711' }]}
+                    onPress={iosDate}
+                  >
+                    <Text style={styles.pickerButtonText}>Confirmar</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[styles.pickerButton, { backgroundColor: '#11182711' }]}
+                    onPress={toggleDatepicker}
+                  >
+                    <Text style={styles.pickerButtonText}>Cancelar</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+
+              {!showPicker && (
+                <Pressable onPress={toggleDatepicker}>
+                  <TextInput
+                    style={[styles.textInput, {color: '#131313'}]}
+                    placeholder='Ex: 27/12/2001'
+                    value={age}
+                    onChangeText={setAge}
+                    placeholderTextColor='#11182744'
+                    editable={false}
+                  />
+                </Pressable>
+              )}
+            </View>
             </View>
           </View>
         </View>

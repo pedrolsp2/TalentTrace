@@ -8,6 +8,7 @@ import { firebase as fb } from '../../Configs/firebasestorageconfig.js'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { querryId } from '../../utils/storage.js';
 import { Publications } from '../Components/Publications/index.js';
+import { format, parse } from 'date-fns';
 
 export default function Index() {
   const route = useRoute();
@@ -16,7 +17,7 @@ export default function Index() {
   const db = firebase.firestore();
   const [idUs, setIdUs] = useState(''); 
   const [dataUser, setDataUser] = useState({})
-  const [documents, setDocuments] = useState([]);
+  const [age, setAge] = useState(null);
 
   const statusUser = () => {
     return !!dataUser;
@@ -97,6 +98,14 @@ export default function Index() {
       navigation.navigate("Welcome")
     }
 
+    function getAge(age){
+      const currentDate = new Date();
+      const providedDate = parse(age, 'dd/MM/yyyy', new Date());  
+      const diffInYears = Math.floor((currentDate - providedDate) / (365.25 * 24 * 60 * 60 * 1000));  
+      setAge(diffInYears);
+      return diffInYears;
+    }
+
     return (
       <SafeAreaView style={styles.container}>
         <ScrollView>
@@ -169,7 +178,7 @@ export default function Index() {
                       color="#1C3F7C"
                       style={styles.iconSkills}
                     />
-                    <Text style={styles.textIcon}> {userData.idade} anos</Text>
+                    <Text style={styles.textIcon}> {getAge(userData.idade)} anos</Text>
 
                     </Text>
 

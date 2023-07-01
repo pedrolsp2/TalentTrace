@@ -7,6 +7,7 @@ import { styles } from './styles.js';
 import { firebase as fb } from '../../../Configs/firebasestorageconfig.js';
 import { querryId, saveFavorites, isFavorites, removeFavorites } from '../../../utils/storage';
 import { Publications } from '../Publications/index.js';
+import { format, parse } from 'date-fns';
 
 export default function UserProfile() {
   const route = useRoute();
@@ -19,6 +20,7 @@ export default function UserProfile() {
   const [photoCover, setPhotoCover] = useState(null);
   const [favorite, setFavorite] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [age, setAge] = useState('')
 
   useLayoutEffect(() => {
     const fetchUserData = async () => {
@@ -79,7 +81,13 @@ export default function UserProfile() {
     };
 
     getStatusFavorites();
-  }, [myUser, dataUser]);
+
+    if (userData && userData.idade) {
+      const age = calculateAge(userData.idade);
+      setAge(age);
+    }
+
+  }, [myUser, dataUser, userData]);
 
   const getImageUrl = async (userData) => {
     try {
@@ -110,6 +118,13 @@ export default function UserProfile() {
         <ActivityIndicator size="large" color="#0000ff" />
       </View>
     );
+  }
+
+  function calculateAge(dateString) {
+    const currentDate = new Date();
+    const providedDate = parse(dateString, 'dd/MM/yyyy', new Date());
+    const diffInYears = Math.floor((currentDate - providedDate) / (365.25 * 24 * 60 * 60 * 1000));
+    return diffInYears;
   }
 
   return (
@@ -177,7 +192,7 @@ export default function UserProfile() {
                     color="#1C3F7C"
                     style={styles.iconSkills}
                   />
-                  <Text style={styles.textIcon}>{userData && userData.idade} anos</Text>
+                  <Text style={styles.textIcon}>{userData && age} anos</Text>
                 </Text>
 
                 <Text style={styles.icon}>
