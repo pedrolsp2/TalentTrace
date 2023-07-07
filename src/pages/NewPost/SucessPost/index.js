@@ -16,7 +16,6 @@ export default function SucessPost() {
   const [postUrl, setPostUrl] = useState('');
   const [date, setDate] = useState('');
 
-
   useEffect(() => {
     const currentDate = new Date();
     const options = {
@@ -35,32 +34,47 @@ export default function SucessPost() {
         const userData = await AsyncStorage.getItem('@talenttrace:post');
         const parsedUserData = JSON.parse(userData);
         setNewData(parsedUserData);
-        console.log('newDatas:', parsedUserData);
-
-        db.collection('users')
-          .where('idUser', '==', parsedUserData.id)
-          .get()
-          .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-              const data = doc.data();
-              const foto = data.foto;
-              getUserPic(foto);
-            });
-          })
-          .catch((error) => {
-            console.log('Erro ao buscar documento:', error);
-          });
-
         getPost(parsedUserData.foto);
+        getFotoByUserId(parsedUserData.id)
+          .then(foto => {
+            if (foto) {
+              console.log('Foto encontrada:', foto);
+            } else {
+              console.log('Nenhuma foto encontrada para o userId fornecido.');
+            }
+          })
+          .catch(error => {
+            console.error('Erro ao buscar foto:', error);
+          });
       } catch (error) {
         console.log(error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchUserData();
   }, []);
+
+  async function getFotoByUserId(userId) {
+    try {
+      const snapshot = await firebase.firestore().collection('users').where('idUser', '==', userId).get();
+      
+      if (snapshot.empty) {
+        console.log('Nenhum documento encontrado com o idUser fornecido.');
+        return null;
+      }
+      
+      // Aqui você pode acessar o campo 'foto' do primeiro documento retornado
+      const data = snapshot.docs[0].data();
+      const foto = data.foto;
+      setPhotoProfile(foto)
+      
+      return foto;
+    } catch (error) {
+      console.error('Erro ao buscar dados do Firebase:', error);
+      return null;
+    }
+  }
 
   const handleNewPost = async () => {
     try {
@@ -72,6 +86,7 @@ export default function SucessPost() {
         idUser: newData.id,
         dataPost: date
       });
+      AsyncStorage.removeItem('@talenttrace:post');
       navigation.navigate('TabRouter', { screen: 'ForYou' });
     } catch (error) {
       console.log('Erro ao criar novo post:', error);
@@ -86,17 +101,6 @@ export default function SucessPost() {
       console.log('post url', postUrl);
     } catch (error) {
       console.log('Erro ao obter a URL do post:', error);
-    }
-  };
-
-  const getUserPic = async (user) => {
-    try {
-      const userRef = storageP.ref().child('profile/' + user);
-      const userUrl = await userRef.getDownloadURL();
-      setPhotoProfile(userUrl);
-      console.log('user url', userUrl);
-    } catch (error) {
-      console.log('Erro ao obter a URL do usuário:', error);
     }
   };
 

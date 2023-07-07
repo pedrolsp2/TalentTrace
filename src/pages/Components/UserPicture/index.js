@@ -7,9 +7,8 @@ import { firebase } from '../../../Configs/firebasestorageconfig.js'
 import {Ionicons} from "@expo/vector-icons"
 
 export function UserPicture(){
-    const storage = firebase.storage();
     const [dataUser, setDataUser] = useState({});
-    const [photoProfile, setPhotoProfile] = useState(null);
+    const [data, setData] = useState([])
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -24,6 +23,7 @@ export function UserPicture(){
           .catch(error => {
           console.log('Erro ao buscar os usuários:', error);
           });
+
         const unsubscribe = firebase.firestore().collection('users').onSnapshot((snapshot) => {
           const data = snapshot.docs
             .map((doc) => {
@@ -39,21 +39,9 @@ export function UserPicture(){
             .filter((item) => item !== null);
   
           if (data.length > 0) {
-            getImageUrl(data[0]);
+            setData(data[0]);
           }
         });
-  
-        const getImageUrl = async (userData) => {
-          try {
-            const profileRef = storage.ref().child('profile' + '/' + userData.foto);
-            const profileUrl = await profileRef.getDownloadURL();
-  
-            setPhotoProfile(profileUrl)  
-          } catch (error) {
-            console.log('Erro ao consultar a imagem:', error);
-            return null;
-          }
-        };
   
         return () => unsubscribe();
   
@@ -61,8 +49,8 @@ export function UserPicture(){
 
     return(
         <View stlye={styles.container}>
-            {photoProfile ? (
-              <Image source={{ uri: photoProfile }} style={styles.profile} />
+            {data.foto ? (
+              <Image source={{ uri: data.foto }} style={styles.profile} />
             ) : 
             <View style={styles.skeletonImage}>
                 <Ionicons name="person" size={20} color="#fafafa"/>

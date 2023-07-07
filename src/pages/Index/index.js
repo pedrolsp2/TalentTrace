@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { View, Image, Text, SafeAreaView, ScrollView,TouchableOpacity, FlatList } from 'react-native';
+import { View, Image, Text, SafeAreaView, ScrollView,TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import firebase from "../../Configs/firebaseconfig.js"
 import { styles } from './styles.js';
-import { firebase as fb } from '../../Configs/firebasestorageconfig.js'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { querryId } from '../../utils/storage.js';
 import { Publications } from '../Components/Publications/index.js';
 import { format, parse } from 'date-fns';
 
 export default function Index() {
-  const route = useRoute();
   const navigation = useNavigation();
-  const storage = fb.storage();
-  const db = firebase.firestore();
   const [idUs, setIdUs] = useState(''); 
   const [dataUser, setDataUser] = useState({})
   const [age, setAge] = useState(null);
@@ -25,8 +21,6 @@ export default function Index() {
 
   const IndexHome = () => {
     const [userData, setUserData] = useState(null);
-    const [photoProfile, setPhotoProfile] = useState(null);
-    const [photoCover, setPhotoCover] = useState(null);
 
     useEffect(() => {
       const fetchUserData = async () => {
@@ -41,7 +35,9 @@ export default function Index() {
         .catch(error => {
         console.log('Erro ao buscar os usuários:', error);
         });
+
       AsyncStorage.removeItem('@talenttrace:dataUsers');
+
       const unsubscribe = firebase.firestore().collection('users').onSnapshot((snapshot) => {
         const data = snapshot.docs
           .map((doc) => {
@@ -58,28 +54,10 @@ export default function Index() {
 
         if (data.length > 0) {
           setUserData(data[0]);
-          getImageUrl(data[0]);
         }
       });
 
       setIdUs(dataUser)
-
-      const getImageUrl = async (userData) => {
-        try {
-
-          const coverRef = storage.ref().child('cover' + '/' + userData.capa);
-          const profileRef = storage.ref().child('profile' + '/' + userData.foto);
-          const coverUrl = await coverRef.getDownloadURL();
-          const profileUrl = await profileRef.getDownloadURL();
-
-          setPhotoCover(coverUrl)
-          setPhotoProfile(profileUrl)
-
-        } catch (error) {
-          //console.log('Erro ao consultar a imagem:', error);
-          return null;
-        }
-      };
 
       return () => unsubscribe();
 
@@ -90,7 +68,7 @@ export default function Index() {
     }  
 
     function setting(){
-      navigation.navigate("Settings", { data: {...userData,urlFoto:photoProfile,urlCover:photoCover} })
+      navigation.navigate("Settings", { data: {...userData,urlFoto:userData.foto,urlCover:userData.capa} })
     }
 
     function exit(){
@@ -110,13 +88,13 @@ export default function Index() {
       <SafeAreaView style={styles.container}>
         <ScrollView>
           <View style={styles.coverContainer}>
-            {photoCover ? (
-              <Image source={{ uri: photoCover }} style={styles.cover} />
+            {userData.capa ? (
+              <Image source={{ uri: userData.capa }} style={styles.cover} />
             ) : 
               <View style={styles.skeleton}></View>
             }
-            {photoProfile ? (
-              <Image source={{ uri: photoProfile }} style={styles.profile} />
+            {userData.foto ? (
+              <Image source={{ uri: userData.foto }} style={styles.profile} />
             ) : 
             <View style={styles.skeletonImage}></View>
           }

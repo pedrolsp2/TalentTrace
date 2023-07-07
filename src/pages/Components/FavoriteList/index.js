@@ -3,44 +3,39 @@ import { View, Text, TouchableOpacity, Image, SafeAreaView,ActivityIndicator} fr
 import { styles } from './styles';
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons, AntDesign, EvilIcons } from '@expo/vector-icons';
-import { firebase as fb } from '../../../Configs/firebasestorageconfig.js'
 import { removeFavorites, querryId } from '../../../utils/storage';
+import { format, parse } from 'date-fns';
 
 export function FavoriteList({ data }) {
     const [photoProfile, setPhotoProfile] = useState(null);
     const [myUser, setMyUser] = useState('');
+    const [age, setAge] = useState('')
     const [isLoading, setIsLoading] = useState(true);
-    const storage = fb.storage();
     const navigation = useNavigation();
 
     useEffect(() => {
         const fetchUserData = async () => {
             const idUser = await querryId();
             setMyUser(idUser);
+            setIsLoading(false)
         };
-
-        const getImageUrl = async (userData) => {
-            try {
-                const profileRef = storage.ref().child('profile' + '/' + userData.foto);
-                const profileUrl = await profileRef.getDownloadURL();
-                setPhotoProfile(profileUrl);
-                setIsLoading(false);
-            } catch (error) {
-                console.log('Erro ao consultar a imagem:', error);
-                setIsLoading(false);
-            }
-        };
-
         fetchUserData()
             .catch(error => {
                 console.log('Erro ao buscar os usuários:', error);
             });
-        getImageUrl(data);
     }, [data]);
 
     function handleTrash(id, idUs) {
         removeFavorites(id, idUs);
     }
+
+    function getAge(age) {
+        const currentDate = new Date();
+        const providedDate = parse(age, 'dd/MM/yyyy', new Date());
+        const diffInYears = Math.floor((currentDate - providedDate) / (365.25 * 24 * 60 * 60 * 1000));
+        return diffInYears;
+      }
+      
 
     if (isLoading) {
         return (
@@ -62,9 +57,9 @@ export function FavoriteList({ data }) {
             <View style={styles.containerInfo}>
                 <View style={styles.infoUser}>
                     <TouchableOpacity onPress={() => navigation.navigate("UserProfile", { data: data.idUser })}>
-                        {photoProfile ? (
+                        {data.foto ? (
                             <Image
-                                source={{ uri: photoProfile }}
+                                source={{ uri: data.foto }}
                                 style={styles.cover}
                             />
                         ) :
@@ -75,7 +70,7 @@ export function FavoriteList({ data }) {
                     </TouchableOpacity>
                     <View>
                         <Text style={styles.NameUser}>{data.nome}</Text>
-                        <Text style={styles.CityUser}>{data.idade} anos de {data.cidade}</Text>
+                        <Text style={styles.CityUser}>{getAge(data.idade)} anos de {data.cidade}</Text>
                     </View>
                 </View>
                 <View style={styles.shareUser}>
@@ -136,7 +131,7 @@ export function FavoriteList({ data }) {
                             color="#1C3F7C"
                             style={styles.iconSkills}
                         />
-                        <Text style={styles.textIcon}> {data.idade} anos</Text>
+                        <Text style={styles.textIcon}> {getAge(data.idade)} anos</Text>
 
                     </Text>
 

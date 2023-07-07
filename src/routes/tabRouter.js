@@ -25,19 +25,6 @@ const TabRouter = () => {
           backgroundColor: '#fafafa',
         },
         headerTintColor: '#1A0751',
-        headerLeft: () => {
-          if (route.name === 'NewPost') {
-            return (
-              <TouchableOpacity
-                style={{ marginLeft: 12 }}
-                onPress={() => navigation.goBack()}
-              >
-                <Ionicons name="arrow-back" size={24} color="#1A0751" />
-              </TouchableOpacity>
-            );
-          }
-          return null;
-        },
         tabBarHideOnKeyboard: true,
         tabBarShowLabel: false,
         tabBarActiveTintColor: '#14AF6C',

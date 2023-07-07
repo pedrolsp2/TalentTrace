@@ -16,8 +16,6 @@ export default function UserProfile() {
   const dataUser = route.params?.data;
   const [userData, setUserData] = useState(null);
   const [myUser, setMyUser] = useState('');
-  const [photoProfile, setPhotoProfile] = useState(null);
-  const [photoCover, setPhotoCover] = useState(null);
   const [favorite, setFavorite] = useState(false);
   const [loading, setLoading] = useState(true);
   const [age, setAge] = useState('')
@@ -65,7 +63,6 @@ export default function UserProfile() {
 
       if (data.length > 0) {
         setUserData(data[0]);
-        getImageUrl(data[0]);
       }
       setLoading(false); // Indicar que o carregamento foi concluído
     });
@@ -88,19 +85,6 @@ export default function UserProfile() {
     }
 
   }, [myUser, dataUser, userData]);
-
-  const getImageUrl = async (userData) => {
-    try {
-      const coverRef = fb.storage().ref().child('cover/' + userData.capa);
-      const profileRef = fb.storage().ref().child('profile/' + userData.foto);
-      const coverUrl = await coverRef.getDownloadURL();
-      const profileUrl = await profileRef.getDownloadURL();
-      setPhotoCover(coverUrl);
-      setPhotoProfile(profileUrl);
-    } catch (error) {
-      console.log('Erro ao consultar a imagem:', error);
-    }
-  };
 
   const handleFavorite = async () => {
     if (favorite) {
@@ -131,13 +115,13 @@ export default function UserProfile() {
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={styles.coverContainer}>
-          {photoCover ? (
-            <Image source={{ uri: photoCover }} style={styles.cover} />
+          {userData.capa ? (
+            <Image source={{ uri: userData.capa }} style={styles.cover} />
           ) : (
             <View style={styles.skeleton}></View>
           )}
-          {photoProfile ? (
-            <Image source={{ uri: photoProfile }} style={styles.profile} />
+          {userData.foto ? (
+            <Image source={{ uri: userData.foto }} style={styles.profile} />
           ) : (
             <View style={styles.skeletonImage}></View>
           )}

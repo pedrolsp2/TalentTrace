@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, Text, Platform, SafeAreaView, TouchableOpacity, TextInput, Pressable  } from 'react-native';
+import { View, ScrollView, Text, Platform, SafeAreaView, TouchableOpacity, TextInput, Pressable } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { primaryColor, secundaryColor, TerColor, styles } from '../styles.js';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import DateTimePicker from '@react-native-community/datetimepicker';
+
 
 export default function Skills() {
   const [city, setCity] = useState('');
@@ -49,22 +50,23 @@ export default function Skills() {
   };
 
   const handleAddSkills = async () => {
-    if(!city || !age || !height || !weight || !position || !leg){
+    if (!city || !age || !height || !weight || !position || !leg) {
       Toast.show({
         type: "error",
         text1: "Erro ao cadastrar",
         text2: "Preencha todos os campos."
       })
     }
-    else{
-      const updatedData = { ...newData,
+    else {
+      const updatedData = {
+        ...newData,
         cidade: city,
         idade: age,
         altura: height,
         peso: weight,
         posicao: position,
         perna: leg,
-        };
+      };
 
       try {
         await AsyncStorage.setItem('@talenttrace:dataUsers', JSON.stringify(updatedData));
@@ -83,7 +85,7 @@ export default function Skills() {
     if (type === 'set') {
       const currentDate = selectedDate;
       setDate(currentDate);
-  
+
       if (Platform.OS === 'android') {
         toggleDatepicker();
         setAge(formatDate(currentDate));
@@ -92,15 +94,15 @@ export default function Skills() {
       toggleDatepicker();
     }
   };
-  
+
   const formatDate = (date) => {
     const day = date.getDate();
     const month = date.getMonth() + 1;
     const year = date.getFullYear();
-  
+
     const formattedDay = day < 10 ? `0${day}` : `${day}`;
     const formattedMonth = month < 10 ? `0${month}` : `${month}`;
-  
+
     return `${formattedDay}/${formattedMonth}/${year}`;
   };
 
@@ -109,10 +111,10 @@ export default function Skills() {
   };
 
   return (
-    <SafeAreaView style={styles.container}> 
+    <SafeAreaView style={styles.container}>
       <ScrollView style={styles.containerItems}>
         <View style={styles.info}>
-          <TouchableOpacity onPress={() => navigation.navigate('PasswordUser')}> 
+          <TouchableOpacity onPress={() => navigation.navigate('PasswordUser')}>
             <Ionicons
               name='chevron-back-outline'
               size={52}
@@ -181,55 +183,70 @@ export default function Skills() {
               </View>
 
               <View style={styles.input}>
-              <AntDesign name='calendar' size={32} color="#1C3F7C" style={styles.icon} />
-              {showPicker && (
-                <DateTimePicker
-                  mode='date'
-                  display='spinner'
-                  value={date}
-                  onChange={onChange}
-                  style={styles.datePicker}
-                />
-              )}
-
-              {showPicker && Platform.OS === 'ios' && (
-                <View style={styles.pickerButtonsContainer}>
-                  <TouchableOpacity
-                    style={[styles.pickerButton, { backgroundColor: '#11182711' }]}
-                    onPress={iosDate}
-                  >
-                    <Text style={styles.pickerButtonText}>Confirmar</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={[styles.pickerButton, { backgroundColor: '#11182711' }]}
-                    onPress={toggleDatepicker}
-                  >
-                    <Text style={styles.pickerButtonText}>Cancelar</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-
-              {!showPicker && (
-                <Pressable onPress={toggleDatepicker}>
+                <AntDesign name='calendar' size={32} color="#1C3F7C" style={styles.icon} />
+                {Platform.OS === 'ios' ? (
+                  <View>
                   <TextInput
-                    style={[styles.textInput, {color: '#131313'}]}
+                    style={[styles.textInput, { color: '#131313' }]}
                     placeholder='Ex: 27/12/2001'
                     value={age}
                     onChangeText={setAge}
                     placeholderTextColor='#11182744'
-                    editable={false}
                   />
-                </Pressable>
-              )}
-            </View>
+                  </View>
+                ) : (
+                  <>
+                    {showPicker && (
+                      <DateTimePicker
+                        mode='date'
+                        display='spinner'
+                        value={date}
+                        onChange={onChange}
+                        style={styles.datePicker}
+                      />
+                    )}
+
+                    {showPicker && Platform.OS === 'ios' && (
+                      <View style={styles.pickerButtonsContainer}>
+                        <TouchableOpacity
+                          style={[styles.pickerButton, { backgroundColor: '#11182711' }]}
+                          onPress={iosDate}
+                        >
+                          <Text style={styles.pickerButtonText}>Confirmar</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                          style={[styles.pickerButton, { backgroundColor: '#11182711' }]}
+                          onPress={toggleDatepicker}
+                        >
+                          <Text style={styles.pickerButtonText}>Cancelar</Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
+
+                    {!showPicker && (
+                      <Pressable onPress={toggleDatepicker}>
+                        <TextInput
+                          style={[styles.textInput, { color: '#131313' }]}
+                          placeholder='Ex: 27/12/2001'
+                          value={age}
+                          onChangeText={setAge}
+                          placeholderTextColor='#11182744'
+                          editable={false}
+                        />
+                      </Pressable>
+                    )}
+                  </>
+                )}
+              </View>
+
             </View>
           </View>
         </View>
-          <TouchableOpacity style={styles.ButtonSkills} onPress={handleAddSkills}> 
-             <Text style={styles.TextButton}>Avançar</Text>
-          </TouchableOpacity>
-      </ScrollView> 
+        <TouchableOpacity style={styles.ButtonSkills} onPress={handleAddSkills}>
+          <Text style={styles.TextButton}>Avançar</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </SafeAreaView>
   );
 }

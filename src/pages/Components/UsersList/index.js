@@ -3,14 +3,12 @@ import { View, Text, TouchableOpacity, Image, SafeAreaView, Share, Linking } fro
 import { styles } from './styles';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons, AntDesign } from '@expo/vector-icons';
-import { firebase as fb } from '../../../Configs/firebasestorageconfig.js';
 import { format, parse } from 'date-fns';
 
 const UsersList = ({ data }) => {
   const [photoProfile, setPhotoProfile] = useState(null);
   const [cell, setCell] = useState(data?.contato);
   const [age, setAge] = useState('')
-  const storage = fb.storage();
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -18,7 +16,6 @@ const UsersList = ({ data }) => {
       const age = calculateAge(data.idade);
       setAge(age);
     }
-    getImageUrl(data);
   }, [data]);
 
   function calculateAge(dateString) {
@@ -27,16 +24,6 @@ const UsersList = ({ data }) => {
     const diffInYears = Math.floor((currentDate - providedDate) / (365.25 * 24 * 60 * 60 * 1000));
     return diffInYears;
   }
-
-  const getImageUrl = async (userData) => {
-    try {
-      const profileRef = storage.ref().child(`profile/${userData.foto}`);
-      const profileUrl = await profileRef.getDownloadURL();
-      setPhotoProfile(profileUrl);
-    } catch (error) {
-      console.log('Erro ao consultar a imagem:', error);
-    }
-  };
 
   const onShare = async () => {
     try {
@@ -72,9 +59,9 @@ const UsersList = ({ data }) => {
       <View style={styles.containerInfo}>
         <View style={styles.infoUser}>
           <TouchableOpacity onPress={() => navigation.navigate('UserProfile', { data: data.idUser })}>
-            {photoProfile ? (
+            {data.foto ? (
               <Image
-                source={{ uri: photoProfile }}
+                source={{ uri: data?.foto }}
                 style={styles.cover}
               />
             ) : (
