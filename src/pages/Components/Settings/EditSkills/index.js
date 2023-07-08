@@ -1,8 +1,8 @@
 import React, { useState, } from 'react';
-import { View, ScrollView, Text,  SafeAreaView, TouchableOpacity, TextInput  } from 'react-native';
+import { View, ScrollView, Text,  SafeAreaView, TouchableOpacity, TextInput, Pressable, Platform  } from 'react-native';
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { styles } from './styles.js';
-import { Ionicons } from '@expo/vector-icons';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { firebase } from '../../../../Configs/firebasestorageconfig';
 import Toast from 'react-native-toast-message';
 
@@ -18,6 +18,8 @@ export default function Skills() {
   const [weight, setWeight] = useState(data.peso);
   const [position, setPostion] = useState(data.posicao);
   const [leg, setLeg] = useState(data.perna);
+  const [showPicker, setShowPicker] = useState(false);
+  const [date, setDate] = useState(new Date());
 
   const handleChangeHeight = (text) => {
     const numericText = text.replace(/[^0-9.]/g, '');
@@ -108,6 +110,28 @@ export default function Skills() {
         });
       });
   };
+
+  const iosDate = () => {
+    toggleDatepicker();
+  };
+
+  const toggleDatepicker = () => {
+    setShowPicker(!showPicker);
+  };
+
+  const onChange = ({ type }, selectedDate) => {
+    if (type === 'set') {
+      const currentDate = selectedDate;
+      setDate(currentDate);
+
+      if (Platform.OS === 'android') {
+        toggleDatepicker();
+        setAge(formatDate(currentDate));
+      }
+    } else {
+      toggleDatepicker();
+    }
+  };
   
   return (
     <SafeAreaView style={styles.container}> 
@@ -125,19 +149,65 @@ export default function Skills() {
                 />
               </View>
             </View>
+
             <View style={styles.input}>
-              <View style={styles.placeholder}>
-                <Ionicons name='person-outline' size={32} color="#1C3F7C" style={styles.icon} />
-                <TextInput
-                  style={styles.textInput}
-                  placeholder='Sua idade'
-                  value={age}
-                  onChangeText={setAge}
-                  maxLength={3}
-                  keyboardType='numeric'
-                />
+                <AntDesign name='calendar' size={32} color="#1C3F7C" style={styles.icon} />
+                {Platform.OS === 'ios' ? (
+                  <View>
+                  <TextInput
+                    style={[styles.textInput, { color: '#131313' }]}
+                    placeholder='Ex: 27/12/2001'
+                    value={age}
+                    onChangeText={setAge}
+                    placeholderTextColor='#11182744'
+                  />
+                  </View>
+                ) : (
+                  <>
+                    {showPicker && (
+                      <DateTimePicker
+                        mode='date'
+                        display='spinner'
+                        value={date}
+                        onChange={onChange}
+                        style={styles.datePicker}
+                      />
+                    )}
+
+                    {showPicker && Platform.OS === 'ios' && (
+                      <View style={styles.pickerButtonsContainer}>
+                        <TouchableOpacity
+                          style={[styles.pickerButton, { backgroundColor: '#11182711' }]}
+                          onPress={iosDate}
+                        >
+                          <Text style={styles.pickerButtonText}>Confirmar</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                          style={[styles.pickerButton, { backgroundColor: '#11182711' }]}
+                          onPress={toggleDatepicker}
+                        >
+                          <Text style={styles.pickerButtonText}>Cancelar</Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
+
+                    {!showPicker && (
+                      <Pressable onPress={toggleDatepicker}>
+                        <TextInput
+                          style={[styles.textInput, { color: '#131313' }]}
+                          placeholder='Ex: 27/12/2001'
+                          value={age}
+                          onChangeText={setAge}
+                          placeholderTextColor='#11182744'
+                          editable={false}
+                        />
+                      </Pressable>
+                    )}
+                  </>
+                )}
               </View>
-            </View>
+
             <View style={styles.input}>
               <View style={styles.placeholder}>
                 <Ionicons name='body-outline' size={32} color="#1C3F7C" style={styles.icon} />
