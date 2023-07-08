@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Image, Text, Button, SafeAreaView, ScrollView, PixelRatio, TouchableOpacity } from 'react-native';
+import { View, Image, Text, Button, SafeAreaView, ScrollView, Platform, TouchableOpacity } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from './styles';
@@ -13,7 +13,7 @@ export default function Welcome() {
   const data = [
     {
       url: Vector1,
-      title: 'Mostre seus talentos',
+      title: 'Seus talentos',
       caption: 'Se você é um jovem apaixonado pelo futebol e está ansioso para mostrar seus talentos para o mundo, temos a solução perfeita para você. Nosso aplicativo inovador é projetado exclusivamente para ajudar jovens jogadores a exibirem suas habilidades e se destacarem no campo.',
     },
     {
@@ -62,22 +62,26 @@ export default function Welcome() {
 
         <View style={styles.containerPercentual}>
           <View style={styles.containerImage}>
-            <Image source={url} width={PixelRatio.getPixelSizeForLayoutSize(100)} height={PixelRatio.getPixelSizeForLayoutSize(100)} resizeMode="cover" />
+            <Image source={url} style={{ width: '110%', height: '110%' }} resizeMode="contain" />
           </View>
         </View>
 
         <View style={styles.containerInfo}>
           <View>
-            <Text style={styles.Title}>{title}</Text>
-            <Text style={styles.Text}>{caption}</Text>
+            <Text style={styles.Title} numberOfLines={1}>{title}</Text>
+            <Text style={[styles.Text,
+              Platform.OS === 'ios' && { marginBottom: '10%' }            
+            ]}>{caption}</Text>
           </View>
-          <TouchableOpacity style={styles.Button} onPress={handleNext}>
+          <TouchableOpacity
+            style={styles.Button}
+            onPress={handleNext}
+          >
             <Text style={styles.TextButton}>
-              {
-                currentIndex >= 2 ? 'Avançar' : 'Próximo'
-              }
+              {currentIndex >= 2 ? 'Avançar' : 'Próximo'}
             </Text>
           </TouchableOpacity>
+
         </View>
       </ScrollView>
     </SafeAreaView>

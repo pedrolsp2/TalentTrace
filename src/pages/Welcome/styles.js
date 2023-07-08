@@ -43,12 +43,12 @@ export const styles = StyleSheet.create({
   containerImage: {
     width: '100%',
     backgroundColor: '#fafafa',
-    height: '115%',
+    height: '200%',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 12,
     position: 'absolute',
-    bottom: '-30%',
+    bottom: '-100%',
     elevation: 4,
     shadowColor: '#000',
     shadowOffset: {
@@ -59,7 +59,7 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.19,
   },
   containerInfo: {
-    marginTop: '25%',
+    marginTop: '35%',
     padding: 12,
     flex: 1,
     justifyContent: 'space-between',
@@ -67,8 +67,9 @@ export const styles = StyleSheet.create({
   Title: {
     fontSize: 32,
     textAlign: 'center',
-    marginBottom: 12,
+    marginBottom: 16,
     fontFamily: 'Poppins_700Bold',
+    flexWrap: 'nowrap'
   },
   Text: {
     fontSize: 15,
