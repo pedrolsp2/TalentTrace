@@ -5,6 +5,7 @@ import { styles } from './styles.js';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { firebase } from '../../../../Configs/firebasestorageconfig';
 import Toast from 'react-native-toast-message';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function Skills() {
 
@@ -18,6 +19,8 @@ export default function Skills() {
   const [weight, setWeight] = useState(data.peso);
   const [position, setPostion] = useState(data.posicao);
   const [leg, setLeg] = useState(data.perna);
+  const [about, setAbout] = useState(data.sobre);
+  const [bio, setBio] = useState(data.passou);  
   const [showPicker, setShowPicker] = useState(false);
   const [date, setDate] = useState(new Date());
 
@@ -47,31 +50,39 @@ export default function Skills() {
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
           const updatedData = {};
-
+  
           if (city !== data.city) {
-            updatedData.city = city;
+            updatedData.cidade = city; // corrected variable name
           }
-
+  
           if (age !== data.idade) {
             updatedData.idade = age;
           }
-
+  
           if (height !== data.altura) {
-            updatedData.altura = altura;
+            updatedData.altura = height; // corrected variable name
           }
-
+  
           if (weight !== data.peso) {
-            updatedData.peso = peso;
+            updatedData.peso = weight; // corrected variable name
           }
-
+  
           if (position !== data.posicao) {
-            updatedData.posicao = posicao;
+            updatedData.posicao = position; // corrected variable name
           }
-
+  
           if (leg !== data.perna) {
-            updatedData.perna = perna;
+            updatedData.perna = leg; // corrected variable name
           }
-
+  
+          if (about !== data.sobre) {
+            updatedData.sobre = about; // corrected variable name
+          }
+  
+          if (bio !== data.passou) {
+            updatedData.passou = bio; // corrected variable name
+          }
+  
           if (Object.keys(updatedData).length === 0) {
             Toast.show({
               type: 'info',
@@ -79,7 +90,7 @@ export default function Skills() {
             });
             return;
           }
-
+  
           firestore
             .collection('users')
             .doc(doc.id)
@@ -110,6 +121,7 @@ export default function Skills() {
         });
       });
   };
+  
 
   const iosDate = () => {
     toggleDatepicker();
@@ -123,7 +135,7 @@ export default function Skills() {
     if (type === 'set') {
       const currentDate = selectedDate;
       setDate(currentDate);
-
+  
       if (Platform.OS === 'android') {
         toggleDatepicker();
         setAge(formatDate(currentDate));
@@ -132,6 +144,15 @@ export default function Skills() {
       toggleDatepicker();
     }
   };
+
+  const formatDate = (date) => {
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+  
+    return `${day}/${month}/${year}`;
+  };
+  
   
   return (
     <SafeAreaView style={styles.container}> 
@@ -252,6 +273,26 @@ export default function Skills() {
                   placeholder='Sua perna mestra'
                   value={leg}
                   onChangeText={setLeg}
+                />
+              </View>
+            </View>
+            <View style={styles.input}>
+              <View style={styles.placeholder}>
+                <TextInput
+                  style={styles.textInput}
+                  placeholder='Diga por onde você passou? Caso não há experiencias, sem problemas!'
+                  value={bio}
+                  onChangeText={setBio}
+                />
+              </View>
+            </View>
+            <View style={styles.input}>
+              <View style={styles.placeholder}>
+                <TextInput
+                  style={styles.textInput}
+                  placeholder='Fale sobre você!'
+                  value={about}
+                  onChangeText={setAbout}
                 />
               </View>
             </View>
