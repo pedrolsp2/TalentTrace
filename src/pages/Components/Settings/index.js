@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Text, View, SafeAreaView, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
-import { firebase } from '../../../Configs/firebasestorageconfig.js'
+import { firebase as fb } from '../../../Configs/firebasestorageconfig.js'
+import firebase from '../../../Configs/firebaseconfig.js'
 import Toast from 'react-native-toast-message';
 
 export default function Settings() {
@@ -39,43 +40,71 @@ export default function Settings() {
       try {
         const response = await fetch(image.uri);
         const blob = await response.blob();
-  
+
         // Obtém a referência do arquivo no armazenamento
-        const storageRef = firebase.storage().ref().child(`profile/${data.foto}`);
-  
+        const storageRef = fb.storage().ref().child(`profile/${data.fotoName}`);
+
         // Faz o upload do novo blob para substituir o arquivo existente
         await storageRef.put(blob);
+
+        // Atualiza a URL da foto no banco de dados
+        const querySnapshot = await firebase.firestore().collection('users').where('foto', '==', data.fotoName).get();
+        querySnapshot.forEach(async (doc) => {
+          await doc.ref.update({ foto: `profile/${data.fotoName}` });
+        });
+
         Toast.show({
           type: "success",
           text1: "Sucesso",
           text2: "Imagem de perfil atualizada com sucesso!"
-        })
+        });
       } catch (error) {
+
+        Toast.show({
+          type: "error",
+          text1: "Opss",
+          text2: "Erro ao atualizar imagem de perfil."
+        });
         console.log('Erro ao atualizar imagem de perfil no armazenamento:', error);
       }
     }
-  
+
     // Verifica se há uma nova imagem para urlCover e atualiza no Firestore
     if (newCover) {
       try {
         const response = await fetch(coverImage.uri);
         const blob = await response.blob();
-  
+
         // Obtém a referência do arquivo no armazenamento
-        const storageRef = firebase.storage().ref().child(`cover/${data.capa}`);
-  
+        const storageRef = fb.storage().ref().child(`cover/${data.capaName}`);
+
         // Faz o upload do novo blob para substituir o arquivo existente
         await storageRef.put(blob);
+
+        // Atualiza a URL da capa no banco de dados
+        const querySnapshot = await firebase.firestore().collection('users').where('capa', '==', data.capaName).get();
+        querySnapshot.forEach(async (doc) => {
+          await doc.ref.update({ capa: `cover/${data.capaName}` });
+        });
+
         Toast.show({
           type: "success",
           text1: "Sucesso",
           text2: "Imagem de capa atualizada com sucesso!"
-        })
+        });
       } catch (error) {
+
+        Toast.show({
+          type: "error",
+          text1: "Opss",
+          text2: "Erro ao atualizar capa."
+        });
         console.log('Erro ao atualizar imagem de capa no armazenamento:', error);
       }
     }
   };
+
+  console.log(data)
   
 
   return (

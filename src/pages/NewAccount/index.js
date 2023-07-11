@@ -65,6 +65,8 @@ export default function NewAccount() {
       senha: users.senha,
       sobre: users.sobre,
       foto: users.foto, 
+      fotoName: users.fotoName,
+      capaName: users.capaName,
       capa: users.capa,
       contato: users.contato      
     }) 

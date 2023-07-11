@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Image, Text, SafeAreaView, ScrollView,TouchableOpacity } from 'react-native';
+import { View, Image, Text, SafeAreaView, ScrollView,TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
 import firebase from "../../Configs/firebaseconfig.js"
@@ -71,10 +71,29 @@ export default function Index() {
       navigation.navigate("Settings", { data: {...userData,urlFoto:userData.foto,urlCover:userData.capa} })
     }
 
-    function exit(){
-      AsyncStorage.removeItem('@talenttrace:idUser');
-      navigation.navigate("Welcome")
-    }
+    const handleExit = () => {
+      Alert.alert(
+        'Desconectar',
+        'Deseja realmente desconectar?',
+        [
+          {
+            text: 'Cancelar',
+            style: 'cancel',
+            onPress: () => {
+              // Ação a ser executada ao pressionar o botão "Cancelar"
+            }
+          },
+          {
+            text: 'Desconectar',
+            style: 'destructive',
+            onPress: () => {
+              AsyncStorage.removeItem('@talenttrace:idUser');
+              navigation.navigate("Welcome")
+            }
+          }
+        ]
+      );
+    }; 
 
     function getAge(age){
       const currentDate = new Date();
@@ -202,7 +221,7 @@ export default function Index() {
                 <Publications data={userData.idUser}/>
             </View>
           </View>
-          <TouchableOpacity onPress={exit} style={styles.exit}>
+          <TouchableOpacity onPress={handleExit} style={styles.exit}>
             <Text style={styles.exitText}>Desconectar</Text>
           </TouchableOpacity>
         </ScrollView>

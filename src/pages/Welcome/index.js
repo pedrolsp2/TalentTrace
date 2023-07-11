@@ -68,7 +68,7 @@ export default function Welcome() {
 
         <View style={styles.containerInfo}>
           <View>
-            <Text style={styles.Title} numberOfLines={1}>{title}</Text>
+          <Text style={styles.Title} numberOfLines={caption === 'Encontre os futuros craques' ? 1 : 2}>{title}</Text>
             <Text style={[styles.Text,
               Platform.OS === 'ios' && { marginBottom: '10%' }            
             ]}>{caption}</Text>

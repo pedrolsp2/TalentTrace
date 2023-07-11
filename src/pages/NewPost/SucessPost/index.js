@@ -76,11 +76,14 @@ export default function SucessPost() {
     }
   }
 
+  console.log(newData)
+
   const handleNewPost = async () => {
     try {
       const userNew = await firebase.firestore().collection('post').add({
         nome: newData.nome,
         foto: postUrl,
+        fotoName: newData.foto,
         descricao: newData.desc,
         user: photoProfile,
         idUser: newData.id,

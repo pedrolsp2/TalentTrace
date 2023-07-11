@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, SafeAreaView, Image, TouchableOpacity, Text } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import firebase from "../../../Configs/firebaseconfig.js";
+import {firebase as fb} from "../../../Configs/firebasestorageconfig.js";
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -8,6 +10,8 @@ export function Publications({ data }) {
   const db = firebase.firestore();
   const [userPost, setUserPost] = useState([]);
   const [datePost, setDatePost] = useState('');
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
 
   useEffect(() => {
     db.collection('post')
@@ -55,21 +59,72 @@ export function Publications({ data }) {
     const diffInMillis = currentDate.getTime() - postDate.getTime();
 
     return diffInMillis > oneDayInMillis;
-  };
+  }; 
 
+  const handleDeletePhoto = async (photo) => {
+    try {
+      // Find the document in 'post' collection based on fotoName field
+      const querySnapshot = await db.collection('post').where('fotoName', '==', photo.fotoName).get();
+  
+      // Delete the document and photo if found
+      querySnapshot.forEach(async (doc) => {
+        // Delete document from the 'post' collection
+        await doc.ref.delete();
+  
+        // Delete photo from storage
+        await fb.ref(`/post/${photo.fotoName}`).delete();
+      });
+  
+      // Remove the deleted photo from the userPost state
+      setUserPost((prevUserPost) => prevUserPost.filter((item) => item.fotoName !== photo.fotoName));
+  
+      // Reset selected photo and delete confirmation state
+      setSelectedPhoto(null);
+      setShowDeleteConfirmation(false);
+    } catch (error) {
+      console.log('Error deleting photo:', error);
+    }
+  };
+  
+  
+  
   return (
-    <View>
-      {userPost.map((item, index) => (
-        <View key={index} style={styles.container}>
-          <Image source={{ uri: item.foto }} style={styles.cover} />
-          <View style={styles.infoView}>
-            <Text style={styles.textTitle}>{item.descricao}</Text>
-            <Text style={[styles.textTitle, styles.local]}>{datePost}</Text>
-          </View>
+    <>
+      {data ? (
+        <View>
+          {userPost.map((item, index) => (
+            <View key={index} style={styles.container}>
+              <TouchableOpacity
+                style={styles.settingsButton}
+                onPress={() => {
+                  setShowDeleteConfirmation(!showDeleteConfirmation);
+                  setSelectedPhoto(item);
+                }}
+              >
+                <Ionicons name="ellipsis-horizontal-outline" size={24} color="#ffffff" style={styles.icon} />
+              </TouchableOpacity>
+              <Image source={{ uri: item.foto }} style={styles.cover} />
+              <View style={styles.infoView}>
+                <Text style={styles.textTitle}>{item.descricao}</Text>
+                <Text style={[styles.textTitle, styles.local]}>{datePost}</Text>
+              </View>
+            </View>
+          ))}
+          {selectedPhoto && showDeleteConfirmation && (
+            <View style={styles.deleteConfirmation}>
+              <TouchableOpacity onPress={() => handleDeletePhoto(selectedPhoto)}>
+                <Text>Deletar post</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
-      ))}
-    </View>
-  );
+      ) : (
+        <Text style={styles.textP}>
+          Sem Publicações
+        </Text>
+      )}
+    </>
+  ); 
 }
 
 export const styles = StyleSheet.create({
@@ -106,5 +161,32 @@ export const styles = StyleSheet.create({
   local: {
     color: '#dadada',
     fontSize: 12
-  }
+  },
+  settingsButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    zIndex: 1,
+  },
+  icon:{
+    textShadowColor: 'rgba(0,0,0, 0.90)',
+    textShadowOffset: { width: -1, height: 1.5 },
+    textShadowRadius: 8,
+    right: 15,
+    top: 10,
+  },
+  deleteConfirmation: {
+    position: 'absolute',
+    top: 40,
+    right: 10,
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 8,
+    zIndex: 1,
+  },
+  textP: {
+    fontFamily: 'Poppins_400Regular',
+    fontSize: 16,
+    paddingBottom: 16,
+  },
 });

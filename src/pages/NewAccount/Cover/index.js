@@ -55,6 +55,7 @@ export default function Picture() {
         const updatedData = {
           ...newData,
           capa: downloadURL,
+          capaName: filename
         };
 
         await AsyncStorage.setItem('@talenttrace:dataUsers', JSON.stringify(updatedData));
