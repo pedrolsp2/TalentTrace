@@ -3,9 +3,15 @@ import { View, Image, Text, Button, SafeAreaView, TouchableOpacity } from 'react
 import { useNavigation } from "@react-navigation/native"; 
 import {styles} from './styles';
 import Vector1 from '../../../assets/Vector-Soccer.png'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LetsGo() { 
     const navigation = useNavigation();   
+
+    function handleNewAccount(){
+        AsyncStorage.removeItem('@talenttrace:dataUsers');
+        navigation.navigate('NameUser')
+      }
 
     return(
         <SafeAreaView style={styles.container}>
@@ -23,7 +29,7 @@ export default function LetsGo() {
                     <TouchableOpacity style={[styles.Button, styles.Login]} onPress={()=>navigation.navigate('Login')}>
                         <Text style={styles.TextButton}>Entrar</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[styles.Button, styles.ButtonNewAccount]} onPress={()=>navigation.navigate('NameUser')}>
+                    <TouchableOpacity style={[styles.Button, styles.ButtonNewAccount]} onPress={handleNewAccount}>
                         <Text style={styles.TextButton}>Não tem conta? Crie uma agora</Text>
                     </TouchableOpacity>
                 </View>

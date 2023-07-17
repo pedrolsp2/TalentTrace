@@ -6,6 +6,7 @@ import { styles} from './styles';
 import {handleNewId} from '../../utils/storage'
 import {firebase} from '../../Configs/firebasestorageconfig'
 import Toast from 'react-native-toast-message';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Login() { 
     
@@ -14,6 +15,7 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const [user, setUser] = useState('');
     const [error, setError] = useState('');
+    
 
     const handleSingIn = async () => {
         try {
@@ -51,6 +53,11 @@ export default function Login() {
           return [];
         }
       };   
+
+      function handleNewAccount(){
+        AsyncStorage.removeItem('@talenttrace:dataUsers');
+        navigation.navigate('NameUser')
+      }
 
     return(
         <SafeAreaView style={styles.container}>
@@ -106,7 +113,7 @@ export default function Login() {
                         <TouchableOpacity style={[styles.Button, styles.logar]} onPress={handleSingIn}>
                             <Text style={styles.TextButton}>Entrar</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.Button, styles.account]} onPress={()=>navigation.navigate('NameUser')}>
+                        <TouchableOpacity style={[styles.Button, styles.account]} onPress={handleNewAccount}>
                             <Text style={styles.TextButton}>Criar Conta</Text>
                         </TouchableOpacity>
                     </View>
